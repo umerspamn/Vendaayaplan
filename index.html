@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PrintEase — Project Roadmap</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --border: #1e1e2e;
+    --accent: #00ff88;
+    --accent2: #ff6b35;
+    --accent3: #7c3aed;
+    --text: #e8e8f0;
+    --muted: #555570;
+    --done-bg: #0d1f14;
+    --done-border: #1a3d28;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .header {
+    margin-bottom: 56px;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0,255,136,0.08);
+    border: 1px solid rgba(0,255,136,0.2);
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    padding: 6px 14px;
+    border-radius: 2px;
+    margin-bottom: 20px;
+  }
+
+  .badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  h1 {
+    font-size: clamp(36px, 6vw, 58px);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -2px;
+    margin-bottom: 12px;
+  }
+
+  h1 span {
+    color: var(--accent);
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+  }
+
+  /* Progress Overview */
+  .progress-bar-wrap {
+    margin: 32px 0 8px;
+    background: var(--border);
+    border-radius: 2px;
+    height: 4px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #00cc6a);
+    border-radius: 2px;
+    transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .progress-stats {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+
+  .progress-stats .count {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* Phase cards */
+  .phase {
+    margin-bottom: 32px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .phase:hover {
+    border-color: #2a2a3e;
+  }
+
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    cursor: pointer;
+    user-select: none;
+    background: var(--surface);
+    transition: background 0.2s;
+  }
+
+  .phase-header:hover {
+    background: #16161f;
+  }
+
+  .phase-number {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    min-width: 28px;
+  }
+
+  .phase-icon {
+    font-size: 20px;
+    min-width: 28px;
+    text-align: center;
+  }
+
+  .phase-title-wrap {
+    flex: 1;
+  }
+
+  .phase-title {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+
+  .phase-meta {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+
+  .phase-pill {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 2px;
+    border: 1px solid;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+
+  .pill-todo   { color: var(--muted);   border-color: var(--muted);   background: transparent; }
+  .pill-active { color: var(--accent2); border-color: var(--accent2); background: rgba(255,107,53,0.07); }
+  .pill-done   { color: var(--accent);  border-color: var(--accent);  background: rgba(0,255,136,0.07); }
+
+  .phase-toggle {
+    font-size: 16px;
+    color: var(--muted);
+    transition: transform 0.3s, color 0.2s;
+  }
+
+  .phase.open .phase-toggle {
+    transform: rotate(180deg);
+    color: var(--accent);
+  }
+
+  .phase-progress-mini {
+    height: 2px;
+    background: var(--border);
+  }
+
+  .phase-progress-mini-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.4s ease;
+  }
+
+  /* Task list */
+  .tasks {
+    display: none;
+    padding: 8px 0 16px;
+    background: var(--bg);
+  }
+
+  .phase.open .tasks {
+    display: block;
+    animation: slideDown 0.25s ease;
+  }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .task {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 13px 24px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border-left: 2px solid transparent;
+  }
+
+  .task:hover {
+    background: rgba(255,255,255,0.02);
+    border-left-color: var(--accent);
+  }
+
+  .task.done {
+    background: var(--done-bg);
+    border-left-color: var(--accent);
+  }
+
+  .task-check {
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--muted);
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+    transition: all 0.2s;
+  }
+
+  .task.done .task-check {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .task-check-icon {
+    display: none;
+    color: #000;
+    font-size: 11px;
+    font-weight: 900;
+  }
+
+  .task.done .task-check-icon {
+    display: block;
+  }
+
+  .task-content {
+    flex: 1;
+  }
+
+  .task-label {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    transition: color 0.2s;
+  }
+
+  .task.done .task-label {
+    color: var(--muted);
+    text-decoration: line-through;
+    text-decoration-color: rgba(0,255,136,0.4);
+  }
+
+  .task-note {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 3px;
+    line-height: 1.5;
+  }
+
+  .task-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    padding: 2px 7px;
+    border-radius: 2px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  .tag-hw  { background: rgba(124,58,237,0.15); color: #a78bfa; }
+  .tag-sw  { background: rgba(59,130,246,0.15); color: #60a5fa; }
+  .tag-biz { background: rgba(255,107,53,0.15); color: #fb923c; }
+  .tag-ops { background: rgba(234,179,8,0.15);  color: #fbbf24; }
+
+  /* Section divider inside tasks */
+  .task-group-label {
+    padding: 12px 24px 6px;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    border-top: 1px solid var(--border);
+    margin-top: 4px;
+  }
+
+  .task-group-label:first-child {
+    border-top: none;
+    margin-top: 0;
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .footer .logo {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  /* Reset button */
+  .reset-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    padding: 6px 14px;
+    border-radius: 2px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+  }
+
+  .reset-btn:hover {
+    border-color: var(--accent2);
+    color: var(--accent2);
+  }
+
+  /* Confetti-style completion flash */
+  @keyframes completionFlash {
+    0%   { box-shadow: 0 0 0 0 rgba(0,255,136,0.4); }
+    70%  { box-shadow: 0 0 0 10px rgba(0,255,136,0); }
+    100% { box-shadow: 0 0 0 0 rgba(0,255,136,0); }
+  }
+
+  .task.just-done {
+    animation: completionFlash 0.6s ease;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="badge">PRINTER VENDING MACHINE — NED UNIVERSITY</div>
+    <h1>PROJECT<br/><span>ROADMAP</span></h1>
+    <p class="subtitle">// Track every step from idea to launch</p>
+
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="globalFill" style="width:0%"></div>
+    </div>
+    <div class="progress-stats">
+      <span><span class="count" id="doneCount">0</span> tasks completed</span>
+      <span><span class="count" id="pctCount">0%</span> overall progress</span>
+    </div>
+  </div>
+
+  <!-- Phases injected by JS -->
+  <div id="phases"></div>
+
+  <div class="footer">
+    <span class="logo">PRINTEASE</span>
+    <span id="syncBadge" style="font-family:'Space Mono',monospace;font-size:10px;padding:4px 10px;border:1px solid #555570;border-radius:2px;color:#555570;letter-spacing:1px;">⟳ SYNCING</span>
+    <button class="reset-btn" onclick="resetAll()">RESET ALL</button>
+  </div>
+
+</div>
+
+<script>
+const PHASES = [
+  {
+    icon: "📋",
+    title: "Phase 1 — Research & Planning",
+    meta: "Week 1–2  ·  Before spending a single rupee",
+    tasks: [
+      { group: "MARKET VALIDATION" },
+      { label: "Visit NED campus, count students near canteen/library areas", note: "Estimate foot traffic for realistic page/day projections", tag: "biz" },
+      { label: "Talk to 20 students — ask about printing habits & pain points", note: "Ask: where do you print, how long does it take, how much do you pay?", tag: "biz" },
+      { label: "Check existing print shops outside NED — note prices & queue times", note: "This is your competition benchmark", tag: "biz" },
+      { group: "LOCATION & PERMISSIONS" },
+      { label: "Meet your friend (registrar's son) — discuss placement officially", note: "Get at least a verbal go-ahead before spending on hardware", tag: "biz" },
+      { label: "Scout 2–3 specific spots inside NED for machine placement", note: "Look for: near entrance, library, or main block — high foot traffic", tag: "ops" },
+      { label: "Confirm power outlet availability at chosen spots (backup for testing)", note: "Even though you're going solar, useful during initial setup", tag: "ops" },
+      { group: "FINANCIALS" },
+      { label: "Create a detailed budget spreadsheet with all component costs", note: "Use Perplexity prompt from our conversation for exact Karachi prices", tag: "biz" },
+      { label: "Identify where startup capital (Rs. 150,000–160,000) is coming from", note: "Personal savings, family, or a small loan", tag: "biz" },
+    ]
+  },
+  {
+    icon: "🤝",
+    title: "Phase 2 — Team & Business Setup",
+    meta: "Week 2–3  ·  Get your people and paperwork ready",
+    tasks: [
+      { group: "CO-FOUNDER / DEVELOPER" },
+      { label: "Find a CS or Electronics student at NED as technical co-builder", note: "Offer revenue share (10–15%) or final year project credit", tag: "biz" },
+      { label: "Define roles clearly — who builds hardware, who builds software", note: "You handle operations & business, they handle code & electronics", tag: "biz" },
+      { group: "LEGAL & BUSINESS" },
+      { label: "Register sole proprietorship (your name + business name)", note: "SECP or local registrar — fast and cheap in Pakistan", tag: "biz" },
+      { label: "Open a separate bank account for business transactions", note: "Keeps personal and business money separate from day one", tag: "biz" },
+      { group: "PAYMENTS SETUP" },
+      { label: "Register JazzCash merchant account", note: "Email MFS-SPU@jazz.com.pk with CNIC + business name", tag: "biz" },
+      { label: "Receive Merchant ID, Password, Integrity Salt from JazzCash", note: "Takes 1–2 business days after registration", tag: "biz" },
+      { label: "Register on JazzCash sandbox for testing", note: "URL: sandbox.jazzcash.com.pk/SandboxDocumentation/", tag: "sw" },
+    ]
+  },
+  {
+    icon: "🛒",
+    title: "Phase 3 — Component Sourcing",
+    meta: "Week 3–4  ·  Buy smart, buy once",
+    tasks: [
+      { group: "ELECTRONICS — Hafeez Centre / Saddar" },
+      { label: "Purchase Brother HL-1110 laser printer", note: "Budget: Rs. 17,000–19,000 — verify jam resistance & Linux driver support", tag: "hw" },
+      { label: "Purchase Raspberry Pi 4 (2GB or 4GB)", note: "Budget: Rs. 8,000–10,000", tag: "hw" },
+      { label: "Purchase 32GB MicroSD card (Samsung/SanDisk)", note: "Budget: Rs. 1,500", tag: "hw" },
+      { label: "Purchase 10-inch HDMI touchscreen display", note: "Budget: Rs. 6,000–9,000 — confirm Raspberry Pi compatibility", tag: "hw" },
+      { label: "Purchase powered USB hub (4 port)", note: "Budget: Rs. 800–1,200", tag: "hw" },
+      { label: "Purchase 4G SIM router (TP-Link MR100 or Huawei)", note: "Budget: Rs. 4,500–6,000", tag: "hw" },
+      { label: "Purchase relay module, jumper wires, breadboard, cooling fan", note: "Budget: Rs. 1,800 total", tag: "hw" },
+      { group: "SOLAR — Saddar Solar Market" },
+      { label: "Purchase 200W solar panel (LONGi or Reon brand)", note: "Budget: Rs. 14,000", tag: "hw" },
+      { label: "Purchase AGM battery 100Ah 12V", note: "Budget: Rs. 20,000 — do NOT go cheaper on battery", tag: "hw" },
+      { label: "Purchase MPPT charge controller 20A", note: "Budget: Rs. 6,000", tag: "hw" },
+      { label: "Purchase pure sine wave inverter 1000W", note: "Budget: Rs. 14,000 — MUST be pure sine, not modified", tag: "hw" },
+      { label: "Purchase MC4 connectors, DC cables, fuse kit", note: "Budget: Rs. 4,000", tag: "hw" },
+      { group: "FABRICATION — SITE / Korangi" },
+      { label: "Get quotes from 3 welders/fabricators for metal cabinet", note: "Approx 3ft tall, 2ft wide, 1.5ft deep with lock + powder coat", tag: "hw" },
+      { label: "Finalize fabricator and place cabinet order", note: "Budget: Rs. 20,000 — takes 5–7 days to fabricate", tag: "hw" },
+      { group: "CONNECTIVITY" },
+      { label: "Buy Zong SIM for machine internet", note: "Register in business name if possible — Rs. 650/month data plan", tag: "ops" },
+      { group: "CONSUMABLES (Initial Stock)" },
+      { label: "Buy 5 reams of 70gsm A4 paper (IK Orange or Double A brand)", note: "Budget: Rs. 3,500 — never use cheap thin paper", tag: "ops" },
+      { label: "Buy 1 extra Brother TN-1000 compatible toner cartridge", note: "Budget: Rs. 1,000–1,200 as backup", tag: "ops" },
+    ]
+  },
+  {
+    icon: "⚙️",
+    title: "Phase 4 — Hardware Assembly",
+    meta: "Week 4–5  ·  Build the physical machine",
+    tasks: [
+      { group: "SOLAR SYSTEM" },
+      { label: "Connect solar panel → MPPT controller → battery → inverter", note: "Test voltage at each stage before connecting next component", tag: "hw" },
+      { label: "Test inverter output with a lamp before connecting printer", note: "Confirm pure sine wave output with multimeter if possible", tag: "hw" },
+      { label: "Mount solar panel on roof or test location", note: "Use NED connection to get rooftop access permission", tag: "ops" },
+      { group: "RASPBERRY PI SETUP" },
+      { label: "Flash Raspberry Pi OS (64-bit) onto MicroSD card", note: "Use Raspberry Pi Imager — free download", tag: "sw" },
+      { label: "Connect touchscreen, USB hub, SIM router to Raspberry Pi", note: "Test each component individually before assembling", tag: "hw" },
+      { label: "Connect Raspberry Pi to printer via USB — test basic print", note: "Print a test page from command line: lp testfile.pdf", tag: "hw" },
+      { group: "CABINET ASSEMBLY" },
+      { label: "Receive finished cabinet from fabricator — inspect quality", note: "Check lock, hinges, powder coat finish, paper slot alignment", tag: "hw" },
+      { label: "Mount printer, Raspberry Pi, inverter inside cabinet securely", note: "Ensure ventilation — printer generates heat during operation", tag: "hw" },
+      { label: "Run power cables neatly — no loose wires", note: "Use cable ties and label each cable", tag: "hw" },
+      { label: "Test full system assembled — solar to printer", note: "Run 50 test prints without power from wall outlet", tag: "hw" },
+    ]
+  },
+  {
+    icon: "💻",
+    title: "Phase 5 — Software Development",
+    meta: "Week 5–7  ·  Build the brain of the machine",
+    tasks: [
+      { group: "SYSTEM SETUP" },
+      { label: "Install Brother HL-1110 Linux drivers on Raspberry Pi", note: "sudo apt-get install printer-driver-brlaser", tag: "sw" },
+      { label: "Install CUPS print server and configure Brother printer", note: "Test with: lpstat -p to confirm printer detected", tag: "sw" },
+      { label: "Install Python 3, pip, required libraries (tkinter, requests, PIL)", note: "sudo apt-get install python3-pip python3-tk python3-pil", tag: "sw" },
+      { group: "CORE APPLICATION" },
+      { label: "Build touchscreen UI (home screen, file upload screen, payment screen)", note: "Use Tkinter — fullscreen, large touch-friendly buttons", tag: "sw" },
+      { label: "Build USB file reader — accepts PDF files only from USB stick", note: "Auto-detect USB insertion, list PDF files on screen", tag: "sw" },
+      { label: "Build page counter — detect number of pages in uploaded PDF", note: "Use PyPDF2 library: pip install PyPDF2", tag: "sw" },
+      { label: "Build price calculator (pages × Rs. 10 = total amount)", note: "Show breakdown clearly on screen before payment", tag: "sw" },
+      { group: "PAYMENT INTEGRATION" },
+      { label: "Integrate JazzCash API — payment request function", note: "Use sandbox credentials first — test with dummy transactions", tag: "sw" },
+      { label: "Build dynamic QR generation and display on touchscreen", note: "Show QR + amount + countdown timer (5 min expiry)", tag: "sw" },
+      { label: "Build payment polling loop — check status every 3 seconds", note: "Trigger print only after confirmed payment response code 000", tag: "sw" },
+      { label: "Build auto-refund function for jam detection", note: "Call JazzCash Refund API automatically when jam detected", tag: "sw" },
+      { group: "MONITORING & ALERTS" },
+      { label: "Set up Telegram bot for machine alerts", note: "Get bot token from @BotFather on Telegram — free", tag: "sw" },
+      { label: "Build jam detection monitor — watch printer CUPS status", note: "Send Telegram alert within 5 seconds of jam detection", tag: "sw" },
+      { label: "Build low paper / low toner alerts", note: "Alert when estimated pages remaining < 100", tag: "sw" },
+      { label: "Build transaction logger — save each sale to local CSV file", note: "Log: date, time, pages, amount, order ID, status", tag: "sw" },
+      { group: "TESTING" },
+      { label: "Complete end-to-end test on JazzCash sandbox", note: "Full flow: upload → price → QR → pay → print", tag: "sw" },
+      { label: "Test jam detection and auto-refund flow", note: "Manually cause a jam — confirm refund triggers correctly", tag: "sw" },
+      { label: "Stress test: run 200 consecutive print jobs", note: "No failures or jams allowed before going live", tag: "sw" },
+      { label: "Switch JazzCash from sandbox to LIVE credentials", note: "Update BASE_URL to payments.jazzcash.com.pk", tag: "sw" },
+    ]
+  },
+  {
+    icon: "🚀",
+    title: "Phase 6 — Launch at NED",
+    meta: "Week 7–8  ·  Go live",
+    tasks: [
+      { group: "PRE-LAUNCH" },
+      { label: "Finalize written agreement with NED for machine placement", note: "Include: location, revenue share (5–10%), duration, access rights", tag: "biz" },
+      { label: "Apply branding sticker/wrap on cabinet", note: "Include: machine name, JazzCash logo, instructions, your contact number", tag: "ops" },
+      { label: "Do a full system test at final NED location (solar + SIM)", note: "Confirm signal strength, panel angle, power throughout day", tag: "ops" },
+      { label: "Print 50 test pages at location — confirm quality", note: "Check print quality, paper dispensing, everything working", tag: "ops" },
+      { group: "LAUNCH DAY" },
+      { label: "Go live — switch to JazzCash production mode", note: "Stay nearby on launch day for first 2–3 hours", tag: "ops" },
+      { label: "Run a small soft launch — tell your friend to spread word at NED", note: "First 50 students get discount — Rs. 5/page instead of Rs. 10", tag: "biz" },
+      { label: "Monitor Telegram alerts actively on day 1", note: "Respond to any jam or issue within 15 minutes", tag: "ops" },
+      { group: "POST-LAUNCH WEEK 1" },
+      { label: "Review transaction log after first week", note: "Calculate actual pages/day vs your projection", tag: "biz" },
+      { label: "Collect student feedback — what can be improved?", note: "Ask 10 students who used the machine in person", tag: "biz" },
+      { label: "Identify any recurring issues and fix them", note: "Paper jams, payment confusion, UI issues", tag: "ops" },
+    ]
+  },
+  {
+    icon: "📈",
+    title: "Phase 7 — Scale & Expand",
+    meta: "Month 2–6  ·  Turn one machine into a business",
+    tasks: [
+      { group: "OPTIMIZE MACHINE 1" },
+      { label: "Negotiate bulk toner deal with compatible toner supplier in Karachi", note: "Target: Rs. 800–1,000 per cartridge buying 10+ at a time", tag: "biz" },
+      { label: "Add color printing option (separate machine or upgrade)", note: "Charge Rs. 30–40/page — very high margin", tag: "biz" },
+      { label: "Add scanning / photocopy function", note: "Buy a scanner module — students pay Rs. 5–10 per scan", tag: "hw" },
+      { group: "EXPAND TO MORE LOCATIONS" },
+      { label: "Use NED success as case study — approach FAST Karachi", note: "Bring transaction data as proof of concept", tag: "biz" },
+      { label: "Build machine 2 using profits from machine 1", note: "Target payback: Month 2–3 at 300+ pages/day", tag: "biz" },
+      { label: "Approach IBA, Karachi University, Aga Khan Hospital", note: "Each is a new revenue stream requiring nothing new to build", tag: "biz" },
+      { group: "LONG TERM" },
+      { label: "Document full machine build process (BOM + software + assembly)", note: "This becomes your product manual when you sell machines to others", tag: "biz" },
+      { label: "Explore selling / leasing machines to other entrepreneurs", note: "Charge Rs. 50,000–80,000 per machine + Rs. 5,000/month support", tag: "biz" },
+      { label: "Hire one part-time person for restocking and maintenance runs", note: "Pay Rs. 15,000–20,000/month — frees your time to scale", tag: "ops" },
+    ]
+  }
+];
+
+// ── Supabase Config — REPLACE THESE TWO VALUES ───────────
+const SUPABASE_URL  = 'https://lhcmphmgmidsncadnafj.supabase.co';
+const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxoY21waG1nbWlkc25jYWRuYWZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MjU2MDcsImV4cCI6MjA5NTIwMTYwN30.q7b2qv4Bf-N5gfwpsz7ttv6sz7bQHXfOAzt6l6VotaU';
+
+// ── Supabase helpers (no SDK needed — plain fetch) ────────
+async function sbGet(key) {
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/checklist?id=eq.${encodeURIComponent(key)}&select=done`,
+    { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
+  );
+  const rows = await res.json();
+  return rows.length ? rows[0].done : null;
+}
+
+async function sbUpsert(key, done) {
+  await fetch(`${SUPABASE_URL}/rest/v1/checklist`, {
+    method: 'POST',
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      Prefer: 'resolution=merge-duplicates',
+    },
+    body: JSON.stringify({ id: key, done, updated_at: new Date().toISOString() }),
+  });
+}
+
+async function sbLoadAll() {
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/checklist?select=id,done`,
+    { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
+  );
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`HTTP ${res.status}: ${body}`);
+  }
+  const rows = await res.json();
+  const map = {};
+  rows.forEach(r => { map[r.id] = r.done; });
+  return map;
+}
+
+async function sbDeleteAll() {
+  await fetch(`${SUPABASE_URL}/rest/v1/checklist?id=neq.___never___`, {
+    method: 'DELETE',
+    headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` },
+  });
+}
+
+// ── State — localStorage as instant cache, Supabase as source of truth ──
+let state = {};
+
+function applyLocalCache() {
+  try {
+    const cached = JSON.parse(localStorage.getItem('printease_cache')) || {};
+    state = cached;
+  } catch { state = {}; }
+}
+
+function writeLocalCache() {
+  try { localStorage.setItem('printease_cache', JSON.stringify(state)); } catch {}
+}
+
+async function initState() {
+  showSyncBadge('loading');
+  applyLocalCache();   // instant paint from cache
+  render();
+  try {
+    const remote = await sbLoadAll();
+    state = { ...state, ...remote };
+    writeLocalCache();
+    render();
+    showSyncBadge('synced');
+  } catch(e) {
+    showSyncBadge('offline');
+    console.error('Supabase load failed — full error:', e.message);
+  }
+}
+
+async function saveKey(key, value) {
+  state[key] = value;
+  writeLocalCache();
+  try {
+    await sbUpsert(key, value);
+    showSyncBadge('synced');
+  } catch(e) {
+    showSyncBadge('offline');
+    console.warn('Supabase save failed', e);
+  }
+}
+
+// ── Render ───────────────────────────────────────────────
+function render() {
+  const container = document.getElementById('phases');
+  container.innerHTML = '';
+
+  PHASES.forEach((phase, pi) => {
+    const taskItems = phase.tasks.filter(t => !t.group);
+    const doneCount = taskItems.filter((_, ti) => {
+      const key = `${pi}-${realIndex(phase.tasks, ti)}`;
+      return state[key];
+    }).length;
+    const total = taskItems.length;
+    const pct = total ? Math.round(doneCount / total * 100) : 0;
+
+    const status = pct === 100 ? 'done' : doneCount > 0 ? 'active' : 'todo';
+    const pillText = pct === 100 ? 'DONE' : doneCount > 0 ? 'IN PROGRESS' : 'TODO';
+    const pillClass = pct === 100 ? 'pill-done' : doneCount > 0 ? 'pill-active' : 'pill-todo';
+
+    const isOpen = state[`open_${pi}`] !== false; // default open
+
+    const phaseEl = document.createElement('div');
+    phaseEl.className = `phase ${isOpen ? 'open' : ''}`;
+    phaseEl.dataset.phase = pi;
+
+    let tasksHTML = '';
+    let taskCounter = 0;
+    phase.tasks.forEach((t, idx) => {
+      if (t.group) {
+        tasksHTML += `<div class="task-group-label">${t.group}</div>`;
+        return;
+      }
+      const key = `${pi}-${idx}`;
+      const done = !!state[key];
+      const tagHTML = t.tag ? `<span class="task-tag tag-${t.tag}">${t.tag.toUpperCase()}</span>` : '';
+      tasksHTML += `
+        <div class="task ${done ? 'done' : ''}" data-key="${key}" onclick="toggleTask('${key}', this)">
+          <div class="task-check">
+            <span class="task-check-icon">✓</span>
+          </div>
+          <div class="task-content">
+            <div class="task-label">${t.label}${tagHTML}</div>
+            ${t.note ? `<div class="task-note">${t.note}</div>` : ''}
+          </div>
+        </div>`;
+      taskCounter++;
+    });
+
+    phaseEl.innerHTML = `
+      <div class="phase-header" onclick="togglePhase(${pi}, this.closest('.phase'))">
+        <span class="phase-number">${String(pi+1).padStart(2,'0')}</span>
+        <span class="phase-icon">${phase.icon}</span>
+        <div class="phase-title-wrap">
+          <div class="phase-title">${phase.title}</div>
+          <div class="phase-meta">${phase.meta} &nbsp;·&nbsp; ${doneCount}/${total} tasks</div>
+        </div>
+        <span class="phase-pill ${pillClass}">${pillText}</span>
+        <span class="phase-toggle">▾</span>
+      </div>
+      <div class="phase-progress-mini">
+        <div class="phase-progress-mini-fill" style="width:${pct}%"></div>
+      </div>
+      <div class="tasks">${tasksHTML}</div>
+    `;
+
+    container.appendChild(phaseEl);
+  });
+
+  updateGlobal();
+}
+
+function realIndex(tasks, taskIdx) {
+  let count = 0;
+  for (let i = 0; i < tasks.length; i++) {
+    if (tasks[i].group) continue;
+    if (count === taskIdx) return i;
+    count++;
+  }
+  return taskIdx;
+}
+
+function toggleTask(key, el) {
+  state[key] = !state[key];
+  saveKey(key, state[key]);
+  if (state[key]) {
+    el.classList.add('done', 'just-done');
+    setTimeout(() => el.classList.remove('just-done'), 700);
+  } else {
+    el.classList.remove('done');
+  }
+  // Update phase progress
+  const pi = parseInt(key.split('-')[0]);
+  const phase = PHASES[pi];
+  const taskItems = phase.tasks.filter(t => !t.group);
+  const doneCount = taskItems.filter((_, ti) => {
+    const k = `${pi}-${realIndex(phase.tasks, ti)}`;
+    return state[k];
+  }).length;
+  const total = taskItems.length;
+  const pct = Math.round(doneCount / total * 100);
+
+  // Update mini progress bar
+  const phaseEl = document.querySelector(`.phase[data-phase="${pi}"]`);
+  if (phaseEl) {
+    phaseEl.querySelector('.phase-progress-mini-fill').style.width = pct + '%';
+    const meta = phaseEl.querySelector('.phase-meta');
+    const parts = meta.textContent.split('·');
+    meta.innerHTML = `${parts[0].trim()} &nbsp;·&nbsp; ${parts[1].trim()} &nbsp;·&nbsp; ${doneCount}/${total} tasks`;
+
+    // Update pill
+    const pill = phaseEl.querySelector('.phase-pill');
+    const status = pct === 100 ? 'done' : doneCount > 0 ? 'active' : 'todo';
+    pill.className = `phase-pill ${pct===100?'pill-done':doneCount>0?'pill-active':'pill-todo'}`;
+    pill.textContent = pct === 100 ? 'DONE' : doneCount > 0 ? 'IN PROGRESS' : 'TODO';
+  }
+
+  updateGlobal();
+}
+
+function togglePhase(pi, el) {
+  el.classList.toggle('open');
+  const k = `open_${pi}`;
+  state[k] = el.classList.contains('open');
+  saveKey(k, state[k]);
+}
+
+function updateGlobal() {
+  let total = 0, done = 0;
+  PHASES.forEach((phase, pi) => {
+    phase.tasks.forEach((t, idx) => {
+      if (t.group) return;
+      total++;
+      if (state[`${pi}-${idx}`]) done++;
+    });
+  });
+  const pct = total ? Math.round(done / total * 100) : 0;
+  document.getElementById('globalFill').style.width = pct + '%';
+  document.getElementById('doneCount').textContent = done;
+  document.getElementById('pctCount').textContent = pct + '%';
+}
+
+async function resetAll() {
+  if (!confirm('Reset all progress? This cannot be undone.')) return;
+  state = {};
+  writeLocalCache();
+  try {
+    await sbDeleteAll();
+    showSyncBadge('synced');
+  } catch(e) {
+    showSyncBadge('offline');
+  }
+  render();
+}
+
+// ── Sync badge ────────────────────────────────────────────
+function showSyncBadge(status) {
+  let badge = document.getElementById('syncBadge');
+  if (!badge) return;
+  const map = {
+    loading: ['⟳ SYNCING',   '#555570'],
+    synced:  ['✓ SYNCED',    '#00ff88'],
+    offline: ['⚠ OFFLINE',   '#ff6b35'],
+  };
+  const [text, color] = map[status] || map.offline;
+  badge.textContent = text;
+  badge.style.color = color;
+  badge.style.borderColor = color;
+}
+
+// Init
+initState();
+</script>
+</body>
+</html>
